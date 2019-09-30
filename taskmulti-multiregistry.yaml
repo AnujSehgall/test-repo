@@ -1,0 +1,15 @@
+version: v1.0.0
+steps:
+# Build target images
+- build: -t {{.Run.Registry}}/testimage:{{.Run.ID}} -f Dockerfile-app .
+- build: -t {{.Values.regDate}}/testimage:{{.Run.Date}} -f Dockerfile-app .
+# Run image 
+- cmd: -t {{.Run.Registry}}/testimage:{{.Run.ID}}
+  id: test
+  detach: true
+  ports: ["8080:80"]
+- cmd: docker stop test
+# Push images
+- push:
+  - {{.Run.Registry}}/testimage:{{.Run.ID}}
+  - {{.Values.regDate}}/testimage:{{.Run.Date}}
